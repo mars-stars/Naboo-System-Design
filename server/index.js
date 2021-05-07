@@ -6,6 +6,6 @@ router.get('/products', controller.products.getAll);
 
 router.get('/products/:id', controller.products.get);
 
-router.get('/related', controller.related.getAll);
+router.get('/products/:id/related', controller.related.getRelatedProducts);
 
 module.exports= router;
