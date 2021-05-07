@@ -1,9 +1,11 @@
 const { Sequelize, DataTypes } = require('sequelize')
+require('dotenv').config();
+
 
 const db = new Sequelize(process.env.DB, process.env.DB_USER, process.env.DB_PASS, {
   host: process.env.DB_HOST,
   dialect: 'postgres',
-  logging: (...msg) => console.log(msg), // Displays all log function call parameters
+  // logging: (...msg) => console.log(msg), // Displays all log function call parameters
 });
 
 
@@ -45,7 +47,7 @@ const Style = db.define('Style', {
   name: DataTypes.STRING,
   sale_price: DataTypes.INTEGER,
   original_price: DataTypes.INTEGER,
-  default_style:  DataTypes.BOOLEAN
+  default_style: DataTypes.BOOLEAN
 }, {
   tableName: 'styles',
   timestamps: false
@@ -99,6 +101,9 @@ const Related = db.define('Related', {
       key: 'id'
     }
   }
+}, {
+  tableName: 'related',
+  timestamps: false
 });
 
 Product.hasMany(Feature, { foreignKey: 'product_id' });
@@ -113,22 +118,22 @@ Photos.belongsTo(Style);
 Style.hasMany(Sku, { foreignKey: 'style_id' });
 Sku.belongsTo(Style);
 
-Product.belongsToMany(Product, { as: 'current', foreignKey: 'current_product_id', through: Product });
-Product.belongsToMany(Product, { as: 'related', foreignKey: 'related_product_id', through: Product });
+// Related.belongsToMany(Product, { as: 'current', foreignKey: 'current_product_id', through: Product });
+// Related.belongsToMany(Product, { as: 'related', foreignKey: 'related_product_id', through: Product });
 
 db
-.authenticate()
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
-.then(() => {
-
-console.log('Connection has been established successfully.');
-
-})
-
-.catch(err => {
-
-console.error('Unable to connect to the database:', err);
-
-});
-
-module.exports = db;
+Product.sync();
+Related.sync();
+module.exports = {
+  db,
+  Product,
+  Related
+};
