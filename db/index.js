@@ -5,11 +5,11 @@ require('dotenv').config();
 const db = new Sequelize(process.env.DB, process.env.DB_USER, process.env.DB_PASS, {
   host: process.env.DB_HOST,
   dialect: 'postgres',
-  // logging: (...msg) => console.log(msg), // Displays all log function call parameters
+  logging: console.log, // Displays all log function call parameters
 });
 
 
-const Product = db.define('Product', {
+const Product = db.define('product', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -25,12 +25,13 @@ const Product = db.define('Product', {
   timestamps: false
 });
 
-const Feature = db.define('Feature', {
+const Feature = db.define('feature', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
+  productId: DataTypes.INTEGER,
   feature: DataTypes.STRING,
   value: DataTypes.STRING
 }, {
@@ -38,7 +39,7 @@ const Feature = db.define('Feature', {
   timestamps: false
 });
 
-const Style = db.define('Style', {
+const Style = db.define('style', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -54,7 +55,7 @@ const Style = db.define('Style', {
 });
 
 
-const Photos = db.define('Photos', {
+const Photos = db.define('photos', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -68,7 +69,7 @@ const Photos = db.define('Photos', {
 });
 
 
-const Sku = db.define('Sku', {
+const Sku = db.define('sku', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -81,7 +82,7 @@ const Sku = db.define('Sku', {
   timestamps: false
 });
 
-const Related = db.define('Related', {
+const Related = db.define('related', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -106,16 +107,16 @@ const Related = db.define('Related', {
   timestamps: false
 });
 
-Product.hasMany(Feature, { foreignKey: 'product_id' });
+Product.hasMany(Feature, { foreignKey: 'productId' });
 Feature.belongsTo(Product);
 
-Product.hasMany(Style, { foreignKey: 'product_id' });
+Product.hasMany(Style, { foreignKey: 'productId' });
 Style.belongsTo(Product);
 
-Style.hasMany(Photos, { foreignKey: 'style_id' });
+Style.hasMany(Photos, { foreignKey: 'styleId' });
 Photos.belongsTo(Style);
 
-Style.hasMany(Sku, { foreignKey: 'style_id' });
+Style.hasMany(Sku, { foreignKey: 'styleId' });
 Sku.belongsTo(Style);
 
 // Related.belongsToMany(Product, { as: 'current', foreignKey: 'current_product_id', through: Product });
@@ -132,8 +133,17 @@ db
 
 Product.sync();
 Related.sync();
+Feature.sync();
+Style.sync();
+Photos.sync();
+Sku.sync();
+
 module.exports = {
   db,
   Product,
-  Related
+  Related,
+  Feature,
+  Style,
+  Photos,
+  Sku
 };

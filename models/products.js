@@ -1,11 +1,12 @@
-const db = require('../db/index.js');
+const { db, Product, Feature } = require('../db/index.js');
 
 module.exports = {
-  getOne: function(id, cb) {
-    db.Product.findAll({
+  getOneProduct: function(id, cb) {
+    Product.findOne({
       where: {
         id: id
-      }
+      },
+      include: { model: Feature, attributes: ['feature', 'value']}
     })
     .then(product => {
       cb(null, product)
@@ -15,7 +16,7 @@ module.exports = {
     })
   },
   getAll: function(cb) {
-    db.Product.findAll()
+    Product.findAll()
     .then(products => {
       cb(null, products)
     })

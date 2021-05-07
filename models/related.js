@@ -10,6 +10,7 @@ module.exports = {
       raw : true
     })
     .then(products => {
+      // return an array of just ids
       products = products.map(product => product.related_product_id);
       cb(null, products)
     })
