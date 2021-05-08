@@ -5,7 +5,8 @@ require('dotenv').config();
 const db = new Sequelize(process.env.DB, process.env.DB_USER, process.env.DB_PASS, {
   host: process.env.DB_HOST,
   dialect: 'postgres',
-  logging: console.log, // Displays all log function call parameters
+  logging: console.log,
+  // logging: false
 });
 
 
@@ -45,6 +46,12 @@ const Style = db.define('style', {
     primaryKey: true,
     autoIncrement: true
   },
+  // productId: {
+  //   type: DataTypes.INTEGER,
+  //   foreignKey: true,
+  //   references: Product.id
+  // },
+  productId: DataTypes.INTEGER,
   name: DataTypes.STRING,
   sale_price: DataTypes.INTEGER,
   original_price: DataTypes.INTEGER,
@@ -61,6 +68,7 @@ const Photos = db.define('photos', {
     primaryKey: true,
     autoIncrement: true
   },
+  styleId: DataTypes.INTEGER,
   url: DataTypes.STRING,
   thumbnail_url: DataTypes.STRING
 }, {
@@ -75,6 +83,7 @@ const Sku = db.define('sku', {
     primaryKey: true,
     autoIncrement: true
   },
+  styleId: DataTypes.INTEGER,
   size: DataTypes.STRING,
   quantity: DataTypes.INTEGER
 }, {
@@ -110,7 +119,7 @@ const Related = db.define('related', {
 Product.hasMany(Feature, { foreignKey: 'productId' });
 Feature.belongsTo(Product);
 
-Product.hasMany(Style, { foreignKey: 'productId' });
+Product.hasMany(Style,  { foreignKey: 'productId' });
 Style.belongsTo(Product);
 
 Style.hasMany(Photos, { foreignKey: 'styleId' });
