@@ -1,5 +1,6 @@
 const { db, Product, Style, Photos, Sku } = require('../db/index.js');
 
+
 module.exports = {
   getAllStylesByProductId: function (id, cb) {
     Product.findOne({
@@ -15,43 +16,43 @@ module.exports = {
             {
               model: Photos,
               attributes: ['thumbnail_url', 'url']
-            },
-            {
-              model: Sku
             }
           ]
         }
       ]
     })
-    // .then(product => {
-    //   Sku.findAll({
-    //     where: {
-    //       styleId: id
-    //     }
-    //   })
-    //   .then(Skus => {
-    //     var skuObj = {};
+    .then(product => {
+      // find all skus that belong to the style
+      Sku.findAll({
+        where: {
+          styleId: id
+        }
+      })
+      .then(Skus => {
+        var skuObj = {};
+        // we have a skus array be we need an object of object { skuId: {size, quantity} }
+        let skusObjArray = Skus.forEach(sku => {
+          // extract the data from each item in sku array
+          let id = sku.id;
+          let size = sku.size;
+          let quantity = sku.quantity;
 
-    //     let skusObjArray = Skus.forEach(sku => {
-    //       let id = sku.id;
-    //       let size = sku.size;
-    //       let quantity = sku.quantity;
+          // shape the object using the data
+          skuObj[id] = { size: size, quantity: quantity };
+        })
 
-    //       skuObj[id] = { size: size, quantity: quantity };
-    //     })
+        // the sku object should go inside each style (result)
+        product.results.forEach(result => {
+          // attached each new sku object to sequelize instance
+          result.setDataValue('skus', skuObj)
+        })
 
-    //     product.results.forEach(result => {
-    //       result.skus = skuObj;
-    //     })
-    //     // console.log('product skus', product);
-    //     return product; // pass to next promise
-    //   })
-
+        return product; // pass to next promise
+      })
       .then(product => {
-        console.log('product skuuuuuuuuuuuuus', product);
          cb(null, product);
       })
-    // })
+    })
     .catch(err => {
       console.log('error in promise chain ', err);
       cb(err);
