@@ -2,12 +2,12 @@ const models = require('../models');
 
 module.exports = {
   getAll: function (req, res) {
-    models.styles.getAllStylesByProductId(req.params.id, (err, product, skus) => {
+    models.styles.getAllStylesByProductId(req.params.id, (err, product) => {
       if (err) {
         console.log(err)
         res.sendStatus(400)
       } else {
-        console.log('product skus', skus);
+
 
         // // test appending properties here
         // product = json.stringify(product);
