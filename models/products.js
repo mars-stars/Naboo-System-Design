@@ -15,8 +15,10 @@ module.exports = {
       cb(err);
     })
   },
-  getAll: function(cb) {
-    Product.findAll()
+  getAll: function(query, cb) {
+    let page = query.page || 1;
+    let limit = query.limit || 5;
+    Product.findAll({ limit: limit, offset: page })
     .then(products => {
       cb(null, products)
     })

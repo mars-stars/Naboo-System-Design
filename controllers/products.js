@@ -11,7 +11,7 @@ module.exports = {
     })
   },
   getAll: function(req, res) {
-    models.products.getAll((err, products) => {
+    models.products.getAll(req.query, (err, products) => {
       if (err) {
         res.sendStatus(400)
       } else {
