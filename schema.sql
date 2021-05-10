@@ -37,8 +37,8 @@ PRIMARY KEY(id));
 CREATE TABLE photos (
 id integer NOT NULL,
 "styleId" integer NOT NULL,
-url varchar,
-thumbnail_url varchar,
+url text,
+thumbnail_url text,
 PRIMARY KEY(id));
 
 /* Table 'skus' */
