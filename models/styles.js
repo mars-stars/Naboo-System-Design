@@ -2,6 +2,7 @@ const { db, Product, Style, Photos, Sku } = require('../db/index.js');
 
 
 module.exports = {
+  // get product by id and include styles and photos
   getAllStylesByProductId: function (id, cb) {
     Product.findOne({
       where: {
@@ -22,7 +23,10 @@ module.exports = {
       ]
     })
     .then(product => {
-      // find all skus that belong to the style
+      return product;
+    })
+    .then(product => {
+      // find all skus that belong to the style. returns an array
       Sku.findAll({
         where: {
           styleId: id
@@ -50,7 +54,8 @@ module.exports = {
         return product; // pass to next promise
       })
       .then(product => {
-         cb(null, product);
+        // pass to the controller
+        cb(null, product);
       })
     })
     .catch(err => {
