@@ -17,25 +17,24 @@ module.exports = {
             {
               model: Photos,
               attributes: ['thumbnail_url', 'url']
+            },
+            {
+              model: Sku
             }
           ]
         }
       ]
     })
     .then(product => {
-      return product;
-    })
-    .then(product => {
-      // find all skus that belong to the style. returns an array
-      Sku.findAll({
-        where: {
-          styleId: id
-        }
-      })
-      .then(Skus => {
+      let results = product.get().results;
+
+      // loop over each style
+      results.forEach(style => {
+        let styleId = style.id;
+
+        // loop over each sku
         var skuObj = {};
-        // we have a skus array be we need an object of object { skuId: {size, quantity} }
-        let skusObjArray = Skus.forEach(sku => {
+        style.skus.forEach(sku => {
           // extract the data from each item in sku array
           let id = sku.id;
           let size = sku.size;
@@ -44,19 +43,14 @@ module.exports = {
           // shape the object using the data
           skuObj[id] = { size: size, quantity: quantity };
         })
-
-        // the sku object should go inside each style (result)
-        product.results.forEach(result => {
-          // attached each new sku object to sequelize instance
-          result.setDataValue('skus', skuObj)
-        })
-
-        return product; // pass to next promise
+        // attach the obj to the style
+        style.setDataValue('skus', skuObj)
       })
-      .then(product => {
-        // pass to the controller
-        cb(null, product);
-      })
+      return product;
+    })
+    .then(product => {
+      // pass to the controller
+      cb(null, product);
     })
     .catch(err => {
       console.log('error in promise chain ', err);
