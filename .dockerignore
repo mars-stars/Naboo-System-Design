@@ -1,7 +1,3 @@
 node_modules
-
-db_backups
-
-.env
-
+npm-debug.log
 scd-aws.pem
