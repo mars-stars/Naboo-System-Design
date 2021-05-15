@@ -8,6 +8,7 @@ module.exports = {
     let cacheKey = `/products/${id}/related`;
 
     if (cache.has(cacheKey)) {
+
       res.status(200).send(cache.get(cacheKey));
     } else {
       models.related.getRelatedByProductId(req.params.id, (err, products) =>{

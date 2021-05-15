@@ -8,7 +8,9 @@ module.exports = {
     let cacheKey = `/products/${id}`;
 
     if (cache.has(cacheKey)) {
-      res.status(200).send(cache.get(cacheKey));
+      let value = cache.get(cacheKey);
+      res.status(200).json(JSON.parse(value));
+
     } else {
 
       models.products.getOneProduct(req.params.id, (err, product) => {
