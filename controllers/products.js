@@ -1,17 +1,26 @@
 const models = require('../models');
 const nodeCache = require('node-cache');
-const cache = new nodeCache({ maxKeys: 100 });
+const cache = new nodeCache({ maxKeys: 50000 });
 
 module.exports = {
   get: function(req, res) {
+    let id = req.params.id;
+    let cacheKey = `/products/${id}`;
 
-    models.products.getOneProduct(req.params.id, (err, product) => {
-      if (err) {
-        res.sendStatus(400)
-      } else {
-        res.status(200).json(product);
-      }
-    })
+    if (cache.has(cacheKey)) {
+      res.status(200).send(cache.get(cacheKey));
+    } else {
+
+      models.products.getOneProduct(req.params.id, (err, product) => {
+        if (err) {
+          res.sendStatus(400)
+        } else {
+          cache.set(cacheKey, JSON.stringify(product));
+          res.status(200).send(product);
+        }
+      })
+    }
+
   },
   getAll: function(req, res) {
     let page = req.query.page || 1;
